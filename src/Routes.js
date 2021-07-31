@@ -2,8 +2,8 @@ import React, { useContext } from "react";
 import MessageBox from "./components/messageBox/messageBox";
 import Context from "./context";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Users from "./pages/users/users";
-import EditPost from "./pages/editPost/editPost";
+import Users from "./pages/usersPage/usersPage";
+import EditPage from "./pages/editPage/editPage";
 
 const Routes = () => {
   const { messageBox, setMessageBox } = useContext(Context);
@@ -23,10 +23,9 @@ const Routes = () => {
       />
       <Router>
         <Switch>
-          <Route path="/editPost/:id">
-            <EditPost />
+          <Route path="/posts/:id/edit">
+            <EditPage />
           </Route>
-          <Route path="/users"></Route>
           <Route path="/">
             <Users />
           </Route>

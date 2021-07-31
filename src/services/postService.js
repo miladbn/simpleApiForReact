@@ -1,23 +1,18 @@
 import axios from "axios";
 
-export const getAllPosts = () =>
+export const getPosts = () =>
   axios({ method: "GET", url: "https://jsonplaceholder.typicode.com/posts" });
 
-export const getSinglePost = (id) =>
+export const getPost = (id) =>
   axios({
     method: "GET",
     url: `https://jsonplaceholder.typicode.com/posts/${id}`,
   });
 
-export const updatePost = (id, title, body, userId) =>
+export const updatePost = (post) =>
   axios({
     method: "PUT",
-    url: `https://jsonplaceholder.typicode.com/posts/${id}`,
+    url: `https://jsonplaceholder.typicode.com/posts/${post.id}`,
     headers: { "Content-type": "application/json; charset=UTF-8" },
-    body: {
-      id: id,
-      title: title,
-      body: body,
-      userId: userId,
-    },
+    data: post,
   });

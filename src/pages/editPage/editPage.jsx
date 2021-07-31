@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
-import { getSinglePost, updatePost } from "../../services/apis";
+import { getPost, updatePost } from "../../services/postService";
 import { useHistory } from "react-router-dom";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
@@ -11,29 +11,17 @@ import Button from "@material-ui/core/Button";
 import SaveIcon from "@material-ui/icons/Save";
 import context from "../../context";
 
-const handleSuccess = (response, setTitle, setBody, setId, setUserId) => {
-  const data = response.data;
-  setTitle(data.title);
-  setBody(data.body);
-  setUserId(data.userId);
-};
-
-const handleFailure = (error, setMessageBox) => {
-  console.log(error);
-};
-const EditPost = () => {
+const EditPage = () => {
   const history = useHistory();
+  const { id } = useParams();
   const { setMessageBox } = useContext(context);
-  let { id } = useParams();
-  const [title, setTitle] = useState();
-  const [body, setBody] = useState();
   const [loading, setLoading] = useState(false);
-  const [userId, setUserId] = useState();
+  const [post, setPost] = useState({});
+
   useEffect(() => {
     setLoading(true);
-    getSinglePost(id)
-      .then((response) => handleSuccess(response, setTitle, setBody, setUserId))
-      .catch((error) => handleFailure(error, setMessageBox))
+    getPost(id)
+      .then((response) => setPost(response.data))
       .finally(() => setLoading(false));
   }, []);
 
@@ -49,10 +37,12 @@ const EditPost = () => {
                 ) : (
                   <TextField
                     label="title"
-                    defaultValue={title}
+                    defaultValue={post.title}
                     helperText="this field is required"
                     variant="outlined"
-                    onChange={(e) => setTitle(e.target.value)}
+                    onChange={(e) =>
+                      setPost({ ...post, title: e.target.value })
+                    }
                   />
                 )}
               </FormControl>
@@ -62,10 +52,10 @@ const EditPost = () => {
                 ) : (
                   <TextField
                     label="body"
-                    defaultValue={body}
+                    defaultValue={post.body}
                     helperText="this field is required"
                     variant="outlined"
-                    onChange={(e) => setBody(e.target.value)}
+                    onChange={(e) => setPost({ ...post, body: e.target.value })}
                   />
                 )}
               </FormControl>{" "}
@@ -76,7 +66,7 @@ const EditPost = () => {
                 className="mt-2"
                 onClick={() => history.push("/")}
               >
-                cancel
+                Cancel
               </Button>
               <Button
                 variant="contained"
@@ -85,15 +75,13 @@ const EditPost = () => {
                 className="mt-2"
                 startIcon={<SaveIcon />}
                 onClick={() => {
-                  updatePost(id, title, body, userId)
-                    .then((response) => {
-                      setMessageBox({
-                        open: true,
-                        severity: "success",
-                        message: "changed successfully",
-                      });
+                  updatePost(post).then(() =>
+                    setMessageBox({
+                      open: true,
+                      severity: "success",
+                      message: "changed successfully",
                     })
-                    .catch((error) => console.log(error));
+                  );
                 }}
               >
                 Save
@@ -106,4 +94,4 @@ const EditPost = () => {
   );
 };
 
-export default EditPost;
+export default EditPage;
